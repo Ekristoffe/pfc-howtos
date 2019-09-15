@@ -30,21 +30,21 @@ static modbus_mapping_t *mb_config_const_mapping; /**< @brief Modbus register st
 
 static void modbusConfigConst_setValues(void)
 {
-    if (mb_config_const_mapping != NULL)
-    {
-        //Store pointer to make it more readable
-        uint16_t *ptr = mb_config_const_mapping->tab_registers;
+	if (mb_config_const_mapping != NULL)
+	{
+		//Store pointer to make it more readable
+		uint16_t *ptr = mb_config_const_mapping->tab_registers;
 
-        ptr[0] = 0x0000;
-        ptr[1] = 0xFFFF;
-        ptr[2] = 0x1234;
-        ptr[3] = 0xAAAA;
-        ptr[4] = 0x5555;
-        ptr[5] = 0x7FFF;
-        ptr[6] = 0x8000;
-        ptr[7] = 0x3FFF;
-        ptr[8] = 0x4000;
-    }
+		ptr[0] = 0x0000;
+		ptr[1] = 0xFFFF;
+		ptr[2] = 0x1234;
+		ptr[3] = 0xAAAA;
+		ptr[4] = 0x5555;
+		ptr[5] = 0x7FFF;
+		ptr[6] = 0x8000;
+		ptr[7] = 0x3FFF;
+		ptr[8] = 0x4000;
+	}
 }
 
 /**
@@ -52,18 +52,18 @@ static void modbusConfigConst_setValues(void)
  */
 int modbusConfigConst_init(void)
 {
-    dprintf(VERBOSE_STD, "Modbus const Init\n");
-    mb_config_const_mapping = modbus_mapping_new(0, 0, MODBUSCONFIG_CONST_REGISTER_LEN, 0);
+	dprintf(VERBOSE_STD, "Modbus const Init\n");
+	mb_config_const_mapping = modbus_mapping_new(0, 0, MODBUSCONFIG_CONST_REGISTER_LEN, 0);
 
-    if (mb_config_const_mapping == NULL) {
-        fprintf(stderr, "Failed to allocate the mapping: %s\n",
-                modbus_strerror(errno));
-        return -1;
-    }
+	if (mb_config_const_mapping == NULL) 
+	{
+		fprintf(stderr, "Failed to allocate the mapping: %s\n", modbus_strerror(errno));
+		return -1;
+	}
 
-    modbusConfigConst_setValues();
+	modbusConfigConst_setValues();
 
-    return 0;
+	return 0;
 }
 
 /**
@@ -71,7 +71,7 @@ int modbusConfigConst_init(void)
  */
 void modbusConfigConst_deInit(void)
 {
-    modbus_mapping_free(mb_config_const_mapping);
+	modbus_mapping_free(mb_config_const_mapping);
 }
 
 /**
@@ -85,17 +85,18 @@ void modbusConfigConst_deInit(void)
  */
 void modbusConfigConst_parseModbusCommand(modbus_t *ctx, uint8_t *command, int command_len)
 {
-    int offset = modbus_get_header_length(ctx);
-    int function = command[offset];
+	int offset = modbus_get_header_length(ctx);
+	int function = command[offset];
 
-    switch(function)
-    {
-     case _FC_READ_INPUT_REGISTERS:
-     case _FC_READ_HOLDING_REGISTERS:
-      modbus_reply_offset(ctx, command, command_len, mb_config_const_mapping, MODBUSCONFIG_CONST_REGISTER_START_ADDRESS);
-      break;
-     default:
-      modbus_reply_exception(ctx, command, MODBUS_EXCEPTION_ILLEGAL_FUNCTION );
-    }
+	switch(function)
+	{
+		case _FC_READ_INPUT_REGISTERS:
+		case _FC_READ_HOLDING_REGISTERS:
+			modbus_reply_offset(ctx, command, command_len, mb_config_const_mapping, MODBUSCONFIG_CONST_REGISTER_START_ADDRESS);
+			break;
+		default:
+			modbus_reply_exception(ctx, command, MODBUS_EXCEPTION_ILLEGAL_FUNCTION );
+			break;
+	}
 }
 

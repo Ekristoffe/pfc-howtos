@@ -5,11 +5,11 @@
 extern int vlevel; /**< @brief Variable for verbosity level needed by many modules\nDeclaration is in main.c*/
 
 #ifndef FALSE
-    #define FALSE 0
+	#define FALSE 0
 #endif
 
 #ifndef TRUE
-    #define TRUE 1
+	#define TRUE 1
 #endif
 
 #define UNUSED(x) ((void)x)
@@ -35,8 +35,8 @@ extern int vlevel; /**< @brief Variable for verbosity level needed by many modul
  * @param[in] ... VA_ARGS like printf
  */
 #define dprintf(printlevel, format, ...) do {       \
-        if (vlevel>=printlevel)                     \
-            fprintf(stderr, format, ##__VA_ARGS__); \
+		if (vlevel>=printlevel)                     \
+			fprintf(stderr, format, ##__VA_ARGS__); \
 } while(0)
 
 #ifndef VERSION
@@ -46,11 +46,12 @@ extern int vlevel; /**< @brief Variable for verbosity level needed by many modul
 /**
  * @brief Return values for str2int
  */
-typedef enum {
-    STR2INT_SUCCESS,
-    STR2INT_OVERFLOW,
-    STR2INT_UNDERFLOW,
-    STR2INT_INCONVERTIBLE
+typedef enum 
+{
+	STR2INT_SUCCESS,
+	STR2INT_OVERFLOW,
+	STR2INT_UNDERFLOW,
+	STR2INT_INCONVERTIBLE
 } str2int_errno;
 
 str2int_errno str2int(int *out, char *s, int base);

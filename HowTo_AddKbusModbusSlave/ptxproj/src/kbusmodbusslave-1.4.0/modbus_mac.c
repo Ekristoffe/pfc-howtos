@@ -32,62 +32,60 @@ static modbus_mapping_t *mb_config_mac_mapping; /**< @brief Modbus register stor
 
 static int modbusConfigMac_setMACAddress(void)
 {
-    struct ifreq ifr;
-    struct ifconf ifc;
-    char buf[1024];
-    int success = 0;
-    int i = 0;
+	struct ifreq ifr;
+	struct ifconf ifc;
+	char buf[1024];
+	int success = 0;
+	int i = 0;
 
-    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
-    if (sock == -1)
-    {
-        return -1;
-    };
+	int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+	if (sock == -1)
+	{
+		return -1;
+	}
 
-    ifc.ifc_len = sizeof(buf);
-    ifc.ifc_buf = buf;
-    if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) { /* handle error */ }
+	ifc.ifc_len = sizeof(buf);
+	ifc.ifc_buf = buf;
+	if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) { /* handle error */ }
 
-    struct ifreq* it = ifc.ifc_req;
-    const struct ifreq* const end = it + (ifc.ifc_len / sizeof(struct ifreq));
+	struct ifreq* it = ifc.ifc_req;
+	const struct ifreq* const end = it + (ifc.ifc_len / sizeof(struct ifreq));
 
-    for (; it != end; ++it)
-    {
-        strcpy(ifr.ifr_name, it->ifr_name);
-        if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0)
-        {
-            if (! (ifr.ifr_flags & IFF_LOOPBACK))
-            { // don't count loopback
-                if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0)
-                {
-                    success = 1;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            return -2;
-        }
-    }
+	for (; it != end; ++it)
+	{
+		strcpy(ifr.ifr_name, it->ifr_name);
+		if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0)
+		{
+			if (! (ifr.ifr_flags & IFF_LOOPBACK))
+			{ // don't count loopback
+				if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0)
+				{
+					success = 1;
+					break;
+				}
+			}
+		}
+		else
+		{
+			return -2;
+		}
+	}
 
-    if (success == 1)
-    {
-        //copy mac to the 3 register
-        for (i=0; i<3; i++)
-        {
-            if (mb_config_mac_mapping != NULL)
-            {
-                mb_config_mac_mapping->tab_registers[i] =
-                    (uint16_t) ((ifr.ifr_hwaddr.sa_data[i*2] << 8) |
-                                (ifr.ifr_hwaddr.sa_data[(i*2)+1]));
-            }
+	if (success == 1)
+	{
+		//copy mac to the 3 register
+		for (i=0; i<3; i++)
+		{
+			if (mb_config_mac_mapping != NULL)
+			{
+				mb_config_mac_mapping->tab_registers[i] = (uint16_t) ((ifr.ifr_hwaddr.sa_data[i*2] << 8) | (ifr.ifr_hwaddr.sa_data[(i*2)+1]));
+			}
 
-        }
-        return 0;
-    }
+		}
+		return 0;
+	}
 
-    return -3;
+	return -3;
 }
 
 /**
@@ -99,19 +97,19 @@ static int modbusConfigMac_setMACAddress(void)
  */
 int modbusConfigMac_init(void)
 {
-    dprintf(VERBOSE_STD, "Modbus Config MAC Init\n");
-    mb_config_mac_mapping = modbus_mapping_new(0, 0, 3, 0);
-    if (mb_config_mac_mapping == NULL) {
-        fprintf(stderr, "Failed to allocate the mapping: %s\n",
-                modbus_strerror(errno));
-        return -1;
-    }
+	dprintf(VERBOSE_STD, "Modbus Config MAC Init\n");
+	mb_config_mac_mapping = modbus_mapping_new(0, 0, 3, 0);
+	if (mb_config_mac_mapping == NULL) 
+	{
+		fprintf(stderr, "Failed to allocate the mapping: %s\n", modbus_strerror(errno));
+		return -1;
+	}
 
-    if (modbusConfigMac_setMACAddress() < 0)
-    {
-        return -2;
-    }
-    return 0;
+	if (modbusConfigMac_setMACAddress() < 0)
+	{
+		return -2;
+	}
+	return 0;
 }
 
 /**
@@ -119,7 +117,7 @@ int modbusConfigMac_init(void)
  */
 void modbusConfigMac_deInit(void)
 {
-    modbus_mapping_free(mb_config_mac_mapping);
+	modbus_mapping_free(mb_config_mac_mapping);
 }
 
 /**
@@ -133,17 +131,18 @@ void modbusConfigMac_deInit(void)
  */
 void modbusConfigMac_parseModbusCommand(modbus_t *ctx, uint8_t *command, int command_len)
 {
-    int offset = modbus_get_header_length(ctx);
-    int function = command[offset];
+	int offset = modbus_get_header_length(ctx);
+	int function = command[offset];
 
-    switch(function)
-    {
-     case _FC_READ_INPUT_REGISTERS:
-     case _FC_READ_HOLDING_REGISTERS:
-      modbus_reply_offset(ctx, command, command_len, mb_config_mac_mapping, MODBUSCONFIG_MAC_START_ADDRESS);
-      break;
-     default:
-      modbus_reply_exception(ctx, command, MODBUS_EXCEPTION_ILLEGAL_FUNCTION );
-    }
+	switch(function)
+	{
+		case _FC_READ_INPUT_REGISTERS:
+		case _FC_READ_HOLDING_REGISTERS:
+			modbus_reply_offset(ctx, command, command_len, mb_config_mac_mapping, MODBUSCONFIG_MAC_START_ADDRESS);
+			break;
+		default:
+			modbus_reply_exception(ctx, command, MODBUS_EXCEPTION_ILLEGAL_FUNCTION );
+			break;
+	}
 }
 

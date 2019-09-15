@@ -39,33 +39,33 @@ static const char description_string[]="MODBUSPFCSLAVE-"; /**< @brief start of d
  */
 int modbusShortDescription_init(void)
 {
-    dprintf(VERBOSE_STD, "Modbus ShortDesctiption Init\n");
-    mb_shortDescription_mapping = modbus_mapping_new(0, 0, MAX_DESCRIPTION_REGISTER_COUNT, 0);
-    if (mb_shortDescription_mapping == NULL) {
-        fprintf(stderr, "Failed to allocate the mapping: %s\n",
-                modbus_strerror(errno));
-        return -1;
-    }
+	dprintf(VERBOSE_STD, "Modbus ShortDesctiption Init\n");
+	mb_shortDescription_mapping = modbus_mapping_new(0, 0, MAX_DESCRIPTION_REGISTER_COUNT, 0);
+	if (mb_shortDescription_mapping == NULL) 
+	{
+		fprintf(stderr, "Failed to allocate the mapping: %s\n", modbus_strerror(errno));
+		return -1;
+	}
 
-    char *dest=(char *) mb_shortDescription_mapping->tab_registers;
-    size_t bytesWritten = strlen(description_string);
-    if ((strncpy(dest, description_string, MAX_DESCRIPTION_LEN)) == NULL)
-    {
-        return -2;
-    }
+	char *dest=(char *) mb_shortDescription_mapping->tab_registers;
+	size_t bytesWritten = strlen(description_string);
+	if ((strncpy(dest, description_string, MAX_DESCRIPTION_LEN)) == NULL)
+	{
+		return -2;
+	}
 
-    dest += bytesWritten; // move pointer
-    bytesWritten += strlen(VERSION);
+	dest += bytesWritten; // move pointer
+	bytesWritten += strlen(VERSION);
 
-    if (bytesWritten < MAX_DESCRIPTION_LEN)
-    {
-        if ((strncpy(dest, VERSION, (MAX_DESCRIPTION_LEN - bytesWritten))) == NULL)
-        {
-            return -3;
-        }
-    }
+	if (bytesWritten < MAX_DESCRIPTION_LEN)
+	{
+		if ((strncpy(dest, VERSION, (MAX_DESCRIPTION_LEN - bytesWritten))) == NULL)
+		{
+			return -3;
+		}
+	}
 
-    return 0;
+	return 0;
 }
 
 /**
@@ -73,7 +73,7 @@ int modbusShortDescription_init(void)
  */
 void modbusShortDescription_deInit(void)
 {
-    modbus_mapping_free(mb_shortDescription_mapping);
+	modbus_mapping_free(mb_shortDescription_mapping);
 }
 
 /**
@@ -87,17 +87,18 @@ void modbusShortDescription_deInit(void)
  */
 void modbusShortDescription_parseModbusCommand(modbus_t *ctx, uint8_t *command, int command_len)
 {
-    int offset = modbus_get_header_length(ctx);
-    int function = command[offset];
+	int offset = modbus_get_header_length(ctx);
+	int function = command[offset];
 
-    switch(function)
-    {
-     case _FC_READ_HOLDING_REGISTERS:
-      modbus_reply_offset(ctx, command, command_len, mb_shortDescription_mapping, MODBUS_SHORT_DESCRIPTION_START_ADDRESS);
-      break;
-     default:
-      modbus_reply_exception(ctx, command, MODBUS_EXCEPTION_ILLEGAL_FUNCTION );
-    }
+	switch(function)
+	{
+		case _FC_READ_HOLDING_REGISTERS:
+			modbus_reply_offset(ctx, command, command_len, mb_shortDescription_mapping, MODBUS_SHORT_DESCRIPTION_START_ADDRESS);
+			break;
+		default:
+			modbus_reply_exception(ctx, command, MODBUS_EXCEPTION_ILLEGAL_FUNCTION );
+			break;
+	}
 
 }
 

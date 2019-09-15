@@ -3,12 +3,13 @@
 
 #include <stdint.h>
 
-typedef struct {
-    unsigned int series;
-    unsigned int value;
-    unsigned int spec1;
-    unsigned int spec2;
-    char *desc_str;
+typedef struct 
+{
+	unsigned int series;
+	unsigned int value;
+	unsigned int spec1;
+	unsigned int spec2;
+	char *desc_str;
 } module_desc_t;
 
 int kbus_start(void);

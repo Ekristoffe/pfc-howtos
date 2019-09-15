@@ -1,4 +1,4 @@
-VERSION = 1.3.0
+VERSION = 1.4.0
 
 CFLAGS=-c -Wall -Wextra -Os
 CFLAGS += -I$(SYSROOT)/usr/include/OsLinux/
@@ -53,6 +53,7 @@ clean:
 zip: clean
 	@mkdir -p $(EXECUTABLE)-$(VERSION)
 	@cp ../kbusmodbusslave.conf $(EXECUTABLE)-$(VERSION)/
+	@cp ../kbusmodbusslave.sh $(EXECUTABLE)-$(VERSION)/
 	@cp $(SOURCES) *.h Makefile $(EXECUTABLE)-$(VERSION)/
 	@tar -cjvRf ../$(EXECUTABLE)-$(VERSION).tar.bz2 $(EXECUTABLE)-$(VERSION)/*
 	@rm -rf $(EXECUTABLE)-$(VERSION)
