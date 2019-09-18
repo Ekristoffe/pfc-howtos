@@ -4,5 +4,7 @@ config KBUSMODBUSSLAVE
 	bool
 	default n
 	prompt "Modbus-PFC-Slave"
+	select LIBMODBUS
+	select WAGO_PFC_DIAGNOSTIC
 	help
 		Standalone Modbus slave which mimics the 750-352 coupler. IO-Terminals accessed via KBUS.

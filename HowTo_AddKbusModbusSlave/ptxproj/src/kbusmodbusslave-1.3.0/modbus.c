@@ -15,7 +15,9 @@
 ///  \author   <BrT> : WAGO Kontakttechnik GmbH & Co. KG
 //------------------------------------------------------------------------------
 #include <errno.h>
+
 #include <modbus/modbus.h>
+
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
