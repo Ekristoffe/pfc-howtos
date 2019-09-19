@@ -76,7 +76,7 @@ case $1 in
 		if ! runtime; then
 			if ! running; then
 				printf "%s\n" "Starting service $NAME..."
-				nohup $DAEMON_PATH/$DAEMON $DAEMONOPTS &> /var/log/$NAME.txt &disown;
+				nohup $DAEMON_PATH/$DAEMON $DAEMONOPTS &> /var/log/$NAME.log &disown;
 				
 				sleep 2
 				if running; then
